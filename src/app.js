@@ -44,6 +44,23 @@ app.use(
   })
 );
 
+// Check if in production environment
+if (process.env.NODE_ENV === "production") {
+  // Use secure session configuration for production environment
+  app.set("trust proxy", 1);
+  app.use(
+    session({
+      secret: secret,
+      resave: true,
+      saveUninitialized: true,
+      cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
+        secure: true, // Đặt secure thành true trong môi trường sản xuất
+      },
+    })
+  );
+}
+
 // Sử dụng passport
 app.use(passport.initialize());
 app.use(passport.session());
