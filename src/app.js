@@ -69,8 +69,12 @@ const sessionConfig = {
   resave: true,
   saveUninitialized: true,
   secret: secret, // Chuỗi bí mật cho session
+  proxy: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // Thời gian sống của cookie
+    sameSite: "none",
+    secure: true,
+    httpOnly: true,
   },
 };
 
