@@ -32,36 +32,61 @@ const generateRandomString = (length) => {
 
 const secret = generateRandomString(32);
 
-// Sử dụng session
-app.use(
-  session({
-    resave: true,
-    saveUninitialized: true,
-    secret: secret, // Chuỗi bí mật cho session
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // Thời gian sống của cookie
-    },
-  })
-);
+// // Sử dụng session
+// app.use(
+//   session({
+//     resave: true,
+//     saveUninitialized: true,
+//     secret: secret, // Chuỗi bí mật cho session
+//     cookie: {
+//       maxAge: 24 * 60 * 60 * 1000, // Thời gian sống của cookie
+//     },
+//   })
+// );
+
+// // Check if in production environment
+// if (process.env.NODE_ENV === "production") {
+//   // Use secure session configuration for production environment
+//   app.set("trust proxy", 1);
+//   app.use(
+//     session({
+//       secret: secret,
+//       resave: true,
+//       saveUninitialized: true,
+//       cookie: {
+//         maxAge: 24 * 60 * 60 * 1000,
+//         secure: true, // Đặt secure thành true trong môi trường sản xuất
+//       },
+//     })
+//   );
+// }
+
+// // Sử dụng passport
+// app.use(passport.initialize());
+// app.use(passport.session());
+
+const sessionConfig = {
+  resave: true,
+  saveUninitialized: true,
+  secret: secret, // Chuỗi bí mật cho session
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // Thời gian sống của cookie
+  },
+};
 
 // Check if in production environment
 if (process.env.NODE_ENV === "production") {
   // Use secure session configuration for production environment
+  sessionConfig.cookie.secure = true;
   app.set("trust proxy", 1);
-  app.use(
-    session({
-      secret: secret,
-      resave: true,
-      saveUninitialized: true,
-      cookie: {
-        maxAge: 24 * 60 * 60 * 1000,
-        secure: true, // Đặt secure thành true trong môi trường sản xuất
-      },
-    })
-  );
+} else {
+  // Use non-secure session configuration for development environment
+  sessionConfig.cookie.secure = false;
+  app.set("trust proxy", 0);
 }
 
-// Sử dụng passport
+// Setup session
+app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
